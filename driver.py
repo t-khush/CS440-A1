@@ -4,12 +4,12 @@ import random
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 WINDOW_HEIGHT = 1000
-WINDOW_WIDTH = 1000
+WINDOW_WIDTH = 500
 
 
 def main():
     global SCREEN
-    randomBlockedSet = randomBlocked(1000, 500, 50) ## Check these numbers and make sure they match drawGrid
+    randomBlockedSet = randomBlocked(1000, 500, 10) ## Check these numbers and make sure they match drawGrid
     pygame.init()
     SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     SCREEN.fill(WHITE)
@@ -32,7 +32,7 @@ def randomBlocked(rows, cols, blockSize):
     return blocked
 
 def drawGrid(randomBlockedSet):
-    blockSize = 50 # Change this to 10 so dimensions are correct. 
+    blockSize = 10 # Change this to 10 so dimensions are correct. 
     rows = 1000 # 1000
     cols = 500 # 500
     print(randomBlockedSet)
@@ -45,9 +45,6 @@ def drawGrid(randomBlockedSet):
                 pygame.draw.rect(SCREEN, BLACK, rect, 1)
             pygame.draw.line(SCREEN, BLACK, (y ,x), (y + blockSize, x + blockSize))
             pygame.draw.line(SCREEN, BLACK, (y + blockSize, x - blockSize), (y - blockSize, x + blockSize))
-
-
-    
 
 
 main()
