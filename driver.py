@@ -14,6 +14,7 @@ def main():
     randomBlockedSet = randomBlocked(ROWS, COLS, BLOCKSIZE) ## Check these numbers and make sure they match drawGrid
     randomStart = randomVertex(ROWS, COLS, BLOCKSIZE)
     randomEnd = randomVertex(ROWS, COLS, BLOCKSIZE)
+    
     # ensuring end point is different than start point
     while (randomEnd==randomStart):
         randomEnd = randomVertex(ROWS, COLS, BLOCKSIZE)
