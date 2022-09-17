@@ -1,5 +1,7 @@
 import pygame
 import random
+from AStar import AStar
+from Node import Node
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -21,6 +23,8 @@ def main():
     print(randomBlockedSet)
     print(randomStart)
     print(randomEnd)
+    
+    aStar = AStar(ROWS, COLS, BLOCKSIZE, randomStart, randomEnd, genNodes(), randomBlockedSet)
 
     pygame.init()
     SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -33,6 +37,14 @@ def main():
                 run = False
         drawGrid(randomBlockedSet, randomStart, randomEnd)
         pygame.display.update()
+
+def genNodes():
+    nodes = set()
+    for i in range(0, ROWS, BLOCKSIZE):
+        for j in range(0, COLS, BLOCKSIZE):
+            node = Node(i, j)
+            nodes.add(node)
+    return nodes
 
 def randomBlocked(rows, cols, blockSize): 
     blocked = set()
