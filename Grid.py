@@ -26,6 +26,7 @@ def main():
     SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     SCREEN.fill(WHITE)
     run = True
+    i = 0
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -64,5 +65,9 @@ def drawGrid(randomBlockedSet, randomStart, randomEnd):
     #(r, g, b) is color, (x, y) is center, R is radius and w is the thickness of the circle border.
     pygame.draw.circle(SCREEN, (0,255,0), randomStart, 5, 5)
     pygame.draw.circle(SCREEN, (255,0,0), randomEnd, 5, 5) 
-    
+
+
+def drawLine(start, end): 
+    pygame.draw.line(SCREEN, (0, 0, 255), start, end)
+
 main()
