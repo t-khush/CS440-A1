@@ -18,11 +18,11 @@ def main():
     randomEnd = randomVertex(ROWS, COLS, BLOCKSIZE)
     
     # ensuring end point is different than start point
-    while (randomEnd==randomStart):
+    while (randomEnd.x==randomStart.x and randomEnd.y == randomStart.y):
         randomEnd = randomVertex(ROWS, COLS, BLOCKSIZE)
     print(randomBlockedSet)
-    print(randomStart)
-    print(randomEnd)
+    print(str(randomStart.x)+" " + str(randomStart.y))
+    print(str(randomEnd.x)+" " + str(randomEnd.y))
     
     aStar = AStar(ROWS, COLS, BLOCKSIZE, randomStart, randomEnd, genNodes(), randomBlockedSet)
 
@@ -59,8 +59,7 @@ def randomBlocked(rows, cols, blockSize):
 def randomVertex(rows, cols, blockSize):
     randX = random.randrange(0, rows, blockSize)
     randY = random.randrange(0, cols, blockSize)
-    pair = (randY, randX)
-    return pair
+    return Node(randY, randX)
 
 def drawGrid(randomBlockedSet, randomStart, randomEnd):
     # print(randomBlockedSet)
@@ -75,8 +74,8 @@ def drawGrid(randomBlockedSet, randomStart, randomEnd):
             pygame.draw.line(SCREEN, BLACK, (y + BLOCKSIZE, x), (y, x + BLOCKSIZE))
     
     #(r, g, b) is color, (x, y) is center, R is radius and w is the thickness of the circle border.
-    pygame.draw.circle(SCREEN, (0,255,0), randomStart, 5, 5)
-    pygame.draw.circle(SCREEN, (255,0,0), randomEnd, 5, 5) 
+    pygame.draw.circle(SCREEN, (0,255,0), (randomStart.x, randomStart.y), 5, 5)
+    pygame.draw.circle(SCREEN, (255,0,0), (randomEnd.x, randomEnd.y), 5, 5) 
 
 
 def drawLine(start, end): 

@@ -10,6 +10,7 @@ class AStar:
         self.start = start
         self.end = end
 
+    
         
     def h(self, sx, sy): 
         sx_goal = self.end[0]
