@@ -39,11 +39,13 @@ def main():
         pygame.display.update()
 
 def genNodes():
-    nodes = set()
+    nodes = []
     for i in range(0, ROWS, BLOCKSIZE):
+        row = []
         for j in range(0, COLS, BLOCKSIZE):
             node = Node(i, j)
-            nodes.add(node)
+            row.append(node)
+        nodes.append(row)
     return nodes
 
 def randomBlocked(rows, cols, blockSize): 
