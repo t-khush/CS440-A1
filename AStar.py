@@ -1,5 +1,6 @@
 import math 
 import heapq
+import pygame 
 
 # just dumping everything from grid.py we can remove unused stuff later
 def aStar(start, end, nodes, edges, blocked, screen):
@@ -46,6 +47,7 @@ def aStar(start, end, nodes, edges, blocked, screen):
 
                     update_vertex(curr_node, cost, parents, neighbour, fringe)
                     
+    # drawPath(path, screen) ==> Test to see if this works as expected
     # if path is empty list we can say no path found
     return path
 
@@ -59,3 +61,10 @@ def update_vertex(curr_node, cost, parents, neighbour, fringe):
         if neighbour in fringe:
             fringe.remove((neighbour.fscore, neighbour))
         heapq.heappush(fringe, (neighbour.fscore, neighbour))
+
+def drawPath(path, screen):
+    for i in range(1, len(path) -1): 
+        drawLine(screen, path[i-1], path[i])
+
+def drawLine(screen, start, end): 
+    pygame.draw.line(screen, (0, 0, 255), (start.x, start.y), (end.x, end.y))
