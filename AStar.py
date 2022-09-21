@@ -3,7 +3,7 @@ import heapq
 import pygame 
 
 # just dumping everything from grid.py we can remove unused stuff later
-def aStar(start, end, nodes, edges, blocked, screen):
+def AStar(start, end, nodes, edges, blocked, screen):
     closed = set()
     path = []
     # [(fscore, (x,y))]
@@ -39,7 +39,7 @@ def aStar(start, end, nodes, edges, blocked, screen):
         for i in range(curr_node.x-1, curr_node.x+2):
             for j in range(curr_node.y-1, curr_node.y+2):
                 # neighbour is in grid, not the current node and unvisited
-                if ((i>=0 and j>=0) and (i<len(nodes[0]) and j<len(nodes)) and (i!=j)):
+                if ((i>=0 and j>=0) and (i<len(nodes) and j<len(nodes[0])) and (i!=curr_node.x or j!=curr_node.y)):
                     neighbour = nodes[i][j]
                     if neighbour not in fringe and neighbour.visited is False:
                         cost[neighbour] = float('inf')
