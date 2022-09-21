@@ -16,7 +16,6 @@ def AStar(start, end, nodes, edges, blocked, screen):
     cost[start] = 0
     parents[start] = start
     heapq.heappush(fringe, (0, start))
-
     while fringe:
         curr_node = heapq.heappop(fringe)[1]
         curr_node.hscore = hscore(curr_node, end)
@@ -41,7 +40,7 @@ def AStar(start, end, nodes, edges, blocked, screen):
                 # neighbour is in grid, not the current node and unvisited
                 if ((i>=0 and j>=0) and (i<len(nodes) and j<len(nodes[0])) and (i!=curr_node.x or j!=curr_node.y)):
                     neighbour = nodes[i][j]
-                    if neighbour not in fringe and neighbour.visited is False:
+                    if (neighbour.fscore, neighbour) not in fringe and neighbour.visited is False:
                         cost[neighbour] = float('inf')
                         parents[neighbour] = None
 
@@ -58,8 +57,9 @@ def update_vertex(curr_node, cost, parents, neighbour, fringe):
     distance = math.dist((curr_node.x, curr_node.y), (neighbour.x, neighbour.y))
     if distance + cost[curr_node] < cost[neighbour]:
         parents[neighbour] = curr_node
-        if neighbour in fringe:
+        if (neighbour.fscore, neighbour) in fringe:
             fringe.remove((neighbour.fscore, neighbour))
+        print(fringe)
         heapq.heappush(fringe, (neighbour.fscore, neighbour))
 
 def drawPath(path, screen):

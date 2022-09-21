@@ -45,7 +45,7 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
         drawGrid(randomBlockedSet, randomStart, randomEnd)
-        # drawLine(randomStart, randomEnd)
+        AStar(randomStart, randomEnd, genNodes(), genEdges(genNodes(), randomBlockedSet), randomBlockedSet, SCREEN)
         pygame.display.update()
 
 def genNodes():
