@@ -79,7 +79,7 @@ def drawPath(path, screen):
         drawLine(screen, path[i-1], path[i])
 
 def drawLine(screen, start, end): 
-    pygame.draw.line(screen, (0, 0, 255), (start.x * 100, start.y * 100), (end.x * 100, end.y * 100),4)
+    pygame.draw.line(screen, (0, 0, 255), (start.y * 100, start.x * 100), (end.y * 100, end.x * 100),4)
 
 def checkInFringe(neighbour, fringe): 
     for i in range(len(fringe)): 
