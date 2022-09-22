@@ -1,5 +1,6 @@
 import math 
 import heapq
+from helper import Edge, Node
 import pygame 
 
 # just dumping everything from grid.py we can remove unused stuff later
@@ -13,18 +14,20 @@ def AStar(start, end, nodes, edges, blocked, screen):
     cost = dict()
     parents = dict()
 
+    # cost: node: float
     cost[start] = 0
     parents[start] = start
     heapq.heappush(fringe, (0, start))
     while fringe:
-        curr_node = heapq.heappop(fringe)[1]
+        s = heapq.heappop(fringe)
+        curr_node = s[1]
         curr_node.hscore = hscore(curr_node, end)
         
         if curr_node == end:
             for i in range(len(nodes)):
                 for j in range(len(nodes[i])):
-                    if (i, j) in cost:
-                        nodes[i][j].gscore = cost[(i,j)]
+                    if nodes[i][j] in cost: #(i, j) in cost
+                        nodes[i][j].gscore = cost[nodes[i][j]]
                     nodes[i][j].fscore = nodes[i][j].gscore + nodes[i][j].hscore
             
             while curr_node!=start:
@@ -48,6 +51,8 @@ def AStar(start, end, nodes, edges, blocked, screen):
                     
     # drawPath(path, screen) ==> Test to see if this works as expected
     # if path is empty list we can say no path found
+    for n in path: 
+        print(str(n.x) +" " + str(n.y))
     return path
 
 def hscore(curr_node, end): 
@@ -59,7 +64,6 @@ def update_vertex(curr_node, cost, parents, neighbour, fringe):
         parents[neighbour] = curr_node
         if (neighbour.fscore, neighbour) in fringe:
             fringe.remove((neighbour.fscore, neighbour))
-        print(fringe)
         heapq.heappush(fringe, (neighbour.fscore, neighbour))
 
 def drawPath(path, screen):
