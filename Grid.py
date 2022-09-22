@@ -81,8 +81,8 @@ def genEdges(nodes, randomBlockedSet):
             # print("done")
     
     # now that edges have been generated, we can use 'randomBlockedSet' to block out edges
-    for blocked in randomBlockedSet:
-        curr_node = nodes[blocked[0]][blocked[1]]
+    # for blocked in randomBlockedSet:
+    #     curr_node = nodes[blocked[0]][blocked[1]]
         # work in progress
     
     
