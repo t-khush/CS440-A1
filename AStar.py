@@ -42,6 +42,8 @@ def AStar(start, end, nodes, edges, blocked, screen):
             path.append(start)
             break
         curr_node.visited = True
+        if(curr_node is start): 
+            nodes[curr_node.x][curr_node.y].visited = True
         for i in range(curr_node.x-1, curr_node.x+2):
             for j in range(curr_node.y-1, curr_node.y+2):
                 # neighbour is in grid, not the current node and unvisited
@@ -57,7 +59,7 @@ def AStar(start, end, nodes, edges, blocked, screen):
                     update_vertex(curr_node, cost, parents, neighbour, fringe)
     drawPath(path, screen) 
     # if path is empty list we can say no path found
-    print("Start: " + str(start.x)+" " + str(start.y) +" End: " + str(end.x) + " " +str(end.y)+" Path: " )
+    print("Start: " + str(start.x)+" " + str(start.y) +" End: " + str(end.x) + " " +str(end.y)+" Path Length "  + str(len(path)))
     for n in path: 
         print(str(n.x) +" " + str(n.y))
     return path
