@@ -32,7 +32,6 @@ def AStar(start, end, nodes, edges, blocked, screen):
             
             curr = curr_node
             parent = parents[curr]
-
             while(curr.x != start.x and curr.y != start.y): 
                 path.append(curr)
                 curr = parent
@@ -56,7 +55,7 @@ def AStar(start, end, nodes, edges, blocked, screen):
                     update_vertex(curr_node, cost, parents, neighbour, fringe)
     drawPath(path, screen) 
     # if path is empty list we can say no path found
-    print("PATH: ")
+    print("Start: " + str(start.x)+" " + str(start.y) +" End: " + str(end.x) + " " +str(end.y)+" Path: " )
     for n in path: 
         print(str(n.x) +" " + str(n.y))
     return path
@@ -67,15 +66,16 @@ def hscore(curr_node, end):
 def update_vertex(curr_node, cost, parents, neighbour, fringe):
     distance = math.dist((curr_node.x, curr_node.y), (neighbour.x, neighbour.y))
     if distance + cost[(curr_node.x, curr_node.y)] < cost[(neighbour.x, neighbour.y)]:
-        neighbour.gscore = distance + curr_node.gscore
+        neighbour.gscore = distance + cost[(curr_node.x, curr_node.y)]
         cost[(neighbour.x, neighbour.y)] = neighbour.gscore
         parents[neighbour] = curr_node
-        if (neighbour.fscore, neighbour) in fringe:
-            fringe.remove((neighbour.fscore, neighbour))
+        if checkInFringe(neighbour, fringe): 
+            deleteFromFringe(neighbour, fringe)
+            heapq.heapify(fringe)
         heapq.heappush(fringe, (neighbour.fscore, neighbour))
 
 def drawPath(path, screen):
-    for i in range(1, len(path) -1): 
+    for i in range(1, len(path)): 
         drawLine(screen, path[i-1], path[i])
 
 def drawLine(screen, start, end): 
@@ -86,3 +86,10 @@ def checkInFringe(neighbour, fringe):
         if(fringe[i][1].x == neighbour.x and fringe[i][1].y == neighbour.y): 
             return True
     return False 
+
+def deleteFromFringe(neighbour, fringe): 
+    for i in range(len(fringe)):
+        if(fringe[i][1].x == neighbour.x and fringe[i][1].y == neighbour.y): 
+            del fringe[i]
+            return
+    return
