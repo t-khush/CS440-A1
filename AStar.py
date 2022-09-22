@@ -17,8 +17,6 @@ def AStar(start, end, nodes, edges, blocked, screen):
     parents[start] = start
     heapq.heappush(fringe, (0, start))
     while len(fringe) != 0:
-        for (x, y) in fringe:
-            print(str(y.x)+" " +str(y.y))
         
         s = heapq.heappop(fringe)
         curr_node = s[1]
@@ -52,13 +50,13 @@ def AStar(start, end, nodes, edges, blocked, screen):
                     continue
                 else: 
                     neighbour = nodes[i][j]
-                    if (neighbour.fscore, neighbour) not in fringe:
+                    if checkInFringe(neighbour, fringe) is False:
                         cost[(neighbour.x, neighbour.y)] = float('inf')
                         parents[neighbour] = None
                     update_vertex(curr_node, cost, parents, neighbour, fringe)
-                    
-    # drawPath(path, screen) ==> Test to see if this works as expected
+    drawPath(path, screen) 
     # if path is empty list we can say no path found
+    print("PATH: ")
     for n in path: 
         print(str(n.x) +" " + str(n.y))
     return path
@@ -68,7 +66,7 @@ def hscore(curr_node, end):
 
 def update_vertex(curr_node, cost, parents, neighbour, fringe):
     distance = math.dist((curr_node.x, curr_node.y), (neighbour.x, neighbour.y))
-    if distance + curr_node.gscore < neighbour.gscore:
+    if distance + cost[(curr_node.x, curr_node.y)] < cost[(neighbour.x, neighbour.y)]:
         neighbour.gscore = distance + curr_node.gscore
         cost[(neighbour.x, neighbour.y)] = neighbour.gscore
         parents[neighbour] = curr_node
@@ -81,4 +79,10 @@ def drawPath(path, screen):
         drawLine(screen, path[i-1], path[i])
 
 def drawLine(screen, start, end): 
-    pygame.draw.line(screen, (0, 0, 255), (start.x, start.y), (end.x, end.y))
+    pygame.draw.line(screen, (0, 0, 255), (start.x * 100, start.y * 100), (end.x * 100, end.y * 100),4)
+
+def checkInFringe(neighbour, fringe): 
+    for i in range(len(fringe)): 
+        if(fringe[i][1].x == neighbour.x and fringe[i][1].y == neighbour.y): 
+            return True
+    return False 
