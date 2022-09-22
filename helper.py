@@ -6,7 +6,8 @@ class Node:
         self.hscore = float(0)
         self.gscore = float(0)
         self.fscore = float(0)
-    
+    def __str__(self):
+        return "("+str(self.x) + " " + str(self.y)+")"
     # We have this function for Node comparison in sets
     def __hash__(self):
         return hash((self.x, self.y))
