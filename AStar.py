@@ -6,6 +6,7 @@ import pygame
 # just dumping everything from grid.py we can remove unused stuff later
 def AStar(start, end, nodes, edges, blocked, screen):
     path = []
+    closed = set()
     fringe = []    # [(fscore, (x,y))]
     start.gscore= 0.0
     heapq.heapify(fringe)
@@ -17,12 +18,13 @@ def AStar(start, end, nodes, edges, blocked, screen):
     parents[(start.x, start.y)] = start
     heapq.heappush(fringe, (0, start))
     while len(fringe) != 0:
-        
+        # print(closed)
         s = heapq.heappop(fringe)
         curr_node = s[1]
         curr_node.hscore = hscore(curr_node, end)
         if curr_node.x == end.x and curr_node.y == end.y:
-            start.visited = True
+            # print("test1")
+            closed.add((start.x, start.y))
             for i in range(len(nodes)):
                 for j in range(len(nodes[i])):
                     if (i, j) in cost: #(i, j) in cost
@@ -38,18 +40,20 @@ def AStar(start, end, nodes, edges, blocked, screen):
                 curr = parent
                 parent = parents[(parent.x, parent.y)]
             path.append(curr)
-            # path.append(parent)
-            path.append(start)
+            path.append(parent)
+            # print("test2")
+            # path.append(start)
             break
-        curr_node.visited = True
+
+        closed.add((curr_node.x, curr_node.y))
         if(curr_node is start): 
-            nodes[curr_node.x][curr_node.y].visited = True
+            closed.add((curr_node.x, curr_node.y))
         for i in range(curr_node.x-1, curr_node.x+2):
             for j in range(curr_node.y-1, curr_node.y+2):
                 # neighbour is in grid, not the current node and unvisited
                 if(i<0 or j < 0 or i >= len(nodes) or j>=len(nodes[0])): 
                     continue
-                elif nodes[i][j].visited is True:
+                elif (nodes[i][j].x, nodes[i][j].y) in closed:
                     continue
                 else: 
                     neighbour = nodes[i][j]
@@ -69,14 +73,15 @@ def hscore(curr_node, end):
 
 def update_vertex(curr_node, cost, parents, neighbour, fringe):
     distance = math.dist((curr_node.x, curr_node.y), (neighbour.x, neighbour.y))
+    # print("curr node: ({},{}), neighbour: ({},{}), fscore: {}, distance: {}".format(curr_node.x, curr_node.y, neighbour.x, neighbour.y, neighbour.fscore, distance))
     if distance + cost[(curr_node.x, curr_node.y)] < cost[(neighbour.x, neighbour.y)]:
         neighbour.gscore = distance + cost[(curr_node.x, curr_node.y)]
         cost[(neighbour.x, neighbour.y)] = neighbour.gscore
         parents[(neighbour.x, neighbour.y)] = curr_node
         if checkInFringe(neighbour, fringe): 
             deleteFromFringe(neighbour, fringe)
-            heapq.heapify(fringe)
-        heapq.heappush(fringe, (neighbour.fscore, neighbour))
+            # heapq.heapify(fringe)
+        heapq.heappush(fringe, (neighbour.gscore + neighbour.hscore, neighbour))
 
 def drawPath(path, screen):
     for i in range(0, len(path)-1): 

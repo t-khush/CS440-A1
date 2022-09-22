@@ -16,18 +16,23 @@ def main():
     # for x in range(0, int(ROWS/BLOCKSIZE)):
     #     for y in range(0, int(COLS/BLOCKSIZE)):
     #         print("x: {}, y: {}".format(x,y))
-
+    nodes = genNodes()
     global SCREEN
     randomBlockedSet = randomBlocked(ROWS, COLS, BLOCKSIZE) ## Check these numbers and make sure they match drawGrid
-    randomStart = randomVertex(ROWS, COLS, BLOCKSIZE)
-    randomEnd = randomVertex(ROWS, COLS, BLOCKSIZE)
+    start = randomVertex(ROWS, COLS, BLOCKSIZE, nodes)
+    randomStart = nodes[start[0]][start[1]]
+    end = randomVertex(ROWS, COLS, BLOCKSIZE, nodes)
+    randomEnd = nodes[end[0]][end[1]]
 
     print(randomBlockedSet)
     print(str(randomStart.x) + " " + str(randomStart.y))
     print(str(randomEnd.x) + " " + str(randomEnd.y))
     
-    nodes = genNodes()
+    
     edges = genEdges(nodes, randomBlockedSet)
+
+    # randomStart = nodes[0][0]
+    # randomEnd = nodes[4][0]
 
     # print("Edge count:", len(edges))
     # for edge in edges:
@@ -45,7 +50,7 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
         drawGrid(randomBlockedSet, randomStart, randomEnd)
-        AStar(randomStart, randomEnd, genNodes(), genEdges(genNodes(), randomBlockedSet), randomBlockedSet, SCREEN)
+        AStar(randomStart, randomEnd, nodes, edges, randomBlockedSet, SCREEN)
         pygame.display.update()
 
 def genNodes():
@@ -98,10 +103,10 @@ def randomBlocked(rows, cols, blockSize):
         blocked.add(pair)
     return blocked
 
-def randomVertex(rows, cols, blockSize):
+def randomVertex(rows, cols, blockSize, nodes):
     randX = random.randrange(0, int(rows/blockSize)+1)
     randY = random.randrange(0, int(cols/blockSize)+1)
-    return Node(randX, randY)
+    return (randX, randY)
 
 def drawGrid(randomBlockedSet, randomStart, randomEnd):
     # print(randomBlockedSet)
