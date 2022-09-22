@@ -45,6 +45,8 @@ def main():
     SCREEN.fill(WHITE)
     drawGrid(randomBlockedSet, randomStart, randomEnd)
     path = AStar(randomStart, randomEnd, nodes, edges, randomBlockedSet, SCREEN)
+    # drawGrid(randomBlockedSet, Node(2,3), Node(2,0))
+    # path = AStar(Node(2,3), Node(2,0), genNodes(), genEdges(genNodes(), randomBlockedSet), randomBlockedSet, SCREEN)
     run = True
     i = 0
     while run:
@@ -137,6 +139,6 @@ def drawPath(path, screen):
         drawLine(screen, path[i], path[i+1])
 
 def drawLine(screen, start, end): 
-    pygame.draw.line(screen, (0, 0, 255), (start.y * 100, start.x * 100), (end.y * 100, end.x * 100),4)
+    pygame.draw.line(screen, (0, 0, 255), (start.y * BLOCKSIZE, start.x * BLOCKSIZE), (end.y * BLOCKSIZE, end.x * BLOCKSIZE),int(0.04 * BLOCKSIZE))
 
 main()
