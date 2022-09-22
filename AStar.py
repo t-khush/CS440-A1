@@ -60,8 +60,7 @@ def AStar(start, end, nodes, edges, blocked, screen):
                     if checkInFringe(neighbour, fringe) is False:
                         cost[(neighbour.x, neighbour.y)] = float('inf')
                         parents[(neighbour.x, neighbour.y)] = None
-                    update_vertex(curr_node, cost, parents, neighbour, fringe)
-    drawPath(path, screen) 
+                    update_vertex(curr_node, cost, parents, neighbour, fringe) 
     # if path is empty list we can say no path found
     print("Start: " + str(start.x)+" " + str(start.y) +" End: " + str(end.x) + " " +str(end.y)+" Path Length "  + str(len(path)))
     for n in path: 
@@ -82,13 +81,6 @@ def update_vertex(curr_node, cost, parents, neighbour, fringe):
             deleteFromFringe(neighbour, fringe)
             # heapq.heapify(fringe)
         heapq.heappush(fringe, (neighbour.gscore + neighbour.hscore, neighbour))
-
-def drawPath(path, screen):
-    for i in range(0, len(path)-1): 
-        drawLine(screen, path[i], path[i+1])
-
-def drawLine(screen, start, end): 
-    pygame.draw.line(screen, (0, 0, 255), (start.y * 100, start.x * 100), (end.y * 100, end.x * 100),4)
 
 def checkInFringe(neighbour, fringe): 
     for i in range(len(fringe)): 
