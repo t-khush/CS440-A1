@@ -2,7 +2,7 @@ import math
 import heapq
 
 # just dumping everything from grid.py we can remove unused stuff later
-def AStar(start, end, nodes, blocked_edges, blocked, screen):
+def AStar(start, end, nodes, blocked_edges):
     path = []
     closed = set()
     fringe = []    # [(fscore, (x,y))]
@@ -61,7 +61,7 @@ def AStar(start, end, nodes, blocked_edges, blocked, screen):
                             parents[(neighbour.x, neighbour.y)] = None
                         update_vertex(curr_node, cost, parents, neighbour, fringe) 
     # if path is empty list we can say no path found
-    print("Start: " + str(start.x)+" " + str(start.y) +" End: " + str(end.x) + " " +str(end.y)+" Path Length "  + str(len(path)))
+    print("AStar Start: " + str(start.x)+" " + str(start.y) +" End: " + str(end.x) + " " +str(end.y)+" Path Length "  + str(len(path)))
     for n in path: 
         print(str(n.x) +" " + str(n.y))
     return path

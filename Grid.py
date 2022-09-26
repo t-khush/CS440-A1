@@ -99,11 +99,16 @@ def main():
         SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         SCREEN.fill(WHITE)
         drawGrid(randomBlockedSet, randomStart, randomEnd)
-        aStarPath = AStar(randomStart, randomEnd, nodes, blocked_edges, randomBlockedSet, SCREEN)
-        # thetaStarPath = ThetaStar(randomStart, randomEnd, nodes, blocked_edges, randomBlockedSet, SCREEN)
+        aStarPath = AStar(randomStart, randomEnd, nodes, blocked_edges)
 
-        # drawGrid(randomBlockedSet, Node(2,3), Node(2,0))
-        # path = AStar(Node(2,3), Node(2,0), genNodes(), genEdges(genNodes(), randomBlockedSet), randomBlockedSet, SCREEN)
+        # Configure blocked vertices for ThetaStar
+        for edge in blocked_edges: 
+            for coordinate in edge: 
+                nodes[coordinate[0]][coordinate[1]].blocked = True 
+
+        ThetaStarPath = ThetaStar(randomStart, randomEnd, nodes, blocked_edges)
+
+        print(blocked_edges)
         run = True
         i = 0
         while run:
