@@ -2,7 +2,7 @@ import math
 import heapq
 
 # just dumping everything from grid.py we can remove unused stuff later
-def AStar(start, end, nodes, edges, blocked, screen):
+def AStar(start, end, nodes, blocked_edges, blocked, screen):
     path = []
     closed = set()
     fringe = []    # [(fscore, (x,y))]
@@ -55,7 +55,7 @@ def AStar(start, end, nodes, edges, blocked, screen):
                     continue
                 else: 
                     neighbour = nodes[i][j]
-                    if (edges[((curr_node.x, curr_node.y), (neighbour.x, neighbour.y))] == "open"):
+                    if ((curr_node.x, curr_node.y), (neighbour.x, neighbour.y)) not in blocked_edges:
                         if checkInFringe(neighbour, fringe) is False:
                             cost[(neighbour.x, neighbour.y)] = float('inf')
                             parents[(neighbour.x, neighbour.y)] = None
