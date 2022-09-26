@@ -35,7 +35,7 @@ def AStar(start, end, nodes, edges, blocked, screen):
             
             curr = curr_node
             parent = parents[(curr.x, curr.y)]
-            while(curr.x != start.x and curr.y != start.y): 
+            while(curr.x != start.x or curr.y != start.y): 
                 path.append(curr)
                 curr = parent
                 parent = parents[(parent.x, parent.y)]

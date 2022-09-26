@@ -1,6 +1,9 @@
+
+import sys
 import pygame
 import random
 from AStar import AStar
+from ThetaStar import ThetaStar
 from helper import Node, Edge
 
 BLACK = (0, 0, 0)
@@ -10,6 +13,40 @@ WINDOW_WIDTH = 1000
 ROWS = 400 #1000 
 COLS = 300 #500 
 BLOCKSIZE = 100 # 10
+Textfile= False
+
+startVertex=(0,0)
+endVertex=(0,0)
+blockedCells=dict()
+
+if len(sys.argv)>1:
+    file1= sys.argv[1]
+    Textfile= True
+    with open(file1, 'r') as f:
+        #since we have orgin at (0,0), we have to move
+        #the values by one
+        line = f.readline().strip().split()
+        startVertex = (int(line[0])-1 , int(line[1]) -1) 
+
+        line = f.readline().strip().split()
+        endVertex = (int(line[0])-1 , int(line[1])-1 )
+
+        line = f.readline().strip().split()
+        COLS = int(line[0])*100
+        ROWS = int(line[1])*100
+
+        print(startVertex)
+        print(endVertex)
+       
+
+        #Getting the blocked cells
+        for line in f.readlines():
+            split = line.strip().split()
+            if (int(split[2])==1):
+                blockedCells[(int(split[1]) -1, int(split[0])-1 )] = int(split[2])
+           
+        
+        print(blockedCells)
 
 def main():
 
@@ -18,43 +55,63 @@ def main():
     #         print("x: {}, y: {}".format(x,y))
     nodes = genNodes()
     global SCREEN
-    randomBlockedSet = randomBlocked(ROWS, COLS, BLOCKSIZE) ## Check these numbers and make sure they match drawGrid
-    start = randomVertex(ROWS, COLS, BLOCKSIZE, nodes)
-    randomStart = nodes[start[0]][start[1]]
-    end = randomVertex(ROWS, COLS, BLOCKSIZE, nodes)
-    randomEnd = nodes[end[0]][end[1]]
 
-    print(randomBlockedSet)
-    print(str(randomStart.x) + " " + str(randomStart.y))
-    print(str(randomEnd.x) + " " + str(randomEnd.y))
-    
-    
-    edges = genEdges(nodes, randomBlockedSet)
+    #if file was detected
+    if Textfile:
 
-    # randomStart = nodes[0][0]
-    # randomEnd = nodes[4][0]
+        tStart= nodes[startVertex[1]][startVertex[0]]
+        tEnd= nodes[endVertex[1]][endVertex[0]]
+        tBlockedSet= setBlocked(blockedCells)
 
-    # print("Edge count:", len(edges))
-    # for edge in edges:
-    #     print("n1: {}, n2: {}".format((edge.n1.x, edge.n1.y), (edge.n2.x, edge.n2.y)))
+       
+        edges = genEdges(nodes, tBlockedSet)
+
+
+        pygame.init()
+        SCREEN= pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT))
+        SCREEN.fill(WHITE)
+        drawGrid(tBlockedSet, tStart, tEnd)
+        path = AStar(tStart, tEnd, nodes, edges, tBlockedSet, SCREEN)
+        run1= True
+
+        while run1:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+            drawPath(path, SCREEN)
+            pygame.display.update()
+    else:
+        #if file was not detected
+        randomBlockedSet = randomBlocked(ROWS, COLS, BLOCKSIZE) ## Check these numbers and make sure they match drawGrid
+        start = randomVertex(ROWS, COLS, BLOCKSIZE, nodes)
+        randomStart = nodes[start[0]][start[1]]
+        end = randomVertex(ROWS, COLS, BLOCKSIZE, nodes)
+        randomEnd = nodes[end[0]][end[1]]
+
+        print(randomBlockedSet)
+        print(str(randomStart.x) + " " + str(randomStart.y))
+        print(str(randomEnd.x) + " " + str(randomEnd.y))
         
-    # aStar = AStar(ROWS, COLS, BLOCKSIZE, randomStart, randomEnd, nodes, edges, randomBlockedSet)
+        
+        edges = genEdges(nodes, randomBlockedSet)
 
-    pygame.init()
-    SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-    SCREEN.fill(WHITE)
-    drawGrid(randomBlockedSet, randomStart, randomEnd)
-    path = AStar(randomStart, randomEnd, nodes, edges, randomBlockedSet, SCREEN)
-    # drawGrid(randomBlockedSet, Node(2,3), Node(2,0))
-    # path = AStar(Node(2,3), Node(2,0), genNodes(), genEdges(genNodes(), randomBlockedSet), randomBlockedSet, SCREEN)
-    run = True
-    i = 0
-    while run:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-        drawPath(path, SCREEN)
-        pygame.display.update()
+        pygame.init()
+        SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+        SCREEN.fill(WHITE)
+        drawGrid(randomBlockedSet, randomStart, randomEnd)
+        aStarPath = AStar(randomStart, randomEnd, nodes, edges, randomBlockedSet, SCREEN)
+        thetaStarPath = ThetaStar(randomStart, randomEnd, nodes, edges, randomBlockedSet, SCREEN)
+
+        # drawGrid(randomBlockedSet, Node(2,3), Node(2,0))
+        # path = AStar(Node(2,3), Node(2,0), genNodes(), genEdges(genNodes(), randomBlockedSet), randomBlockedSet, SCREEN)
+        run = True
+        i = 0
+        while run:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+            drawPath(aStarPath, SCREEN)
+            pygame.display.update()
 
 def genNodes():
     nodes = []
@@ -105,6 +162,15 @@ def randomBlocked(rows, cols, blockSize):
         pair = (randX, randY)
         blocked.add(pair)
     return blocked
+
+#if we already have file of blocked cells
+def setBlocked(blockedDict):
+    blocked1=set()
+    for key in blockedDict:
+        blocked1.add(key)
+    
+    return blocked1
+
 
 def randomVertex(rows, cols, blockSize, nodes):
     randX = random.randrange(0, int(rows/blockSize)+1)
