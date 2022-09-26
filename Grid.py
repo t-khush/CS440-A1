@@ -4,7 +4,7 @@ import pygame
 import random
 from AStar import AStar
 from ThetaStar import ThetaStar
-from helper import Node, Edge
+from helper import Node
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -63,7 +63,7 @@ def main():
         tEnd= nodes[endVertex[1]][endVertex[0]]
         tBlockedSet= setBlocked(blockedCells)
 
-       
+
         edges = genEdges(nodes, tBlockedSet)
 
 
@@ -94,6 +94,7 @@ def main():
         
         
         edges = genEdges(nodes, randomBlockedSet)
+        block_edges(edges, randomBlockedSet)
 
         pygame.init()
         SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -130,7 +131,11 @@ def genEdges(nodes, randomBlockedSet):
     #     print()    
 
     # [(node1, node2)]
-    edges=[]
+
+    # {
+    #   ( (current.x, current.y), (neighbour.x, neighbour.y) ) = "open/blocked"
+    # }
+    edges = dict()
     for row in nodes:
         for node in row:
             # the loops below run 9 times
@@ -141,17 +146,31 @@ def genEdges(nodes, randomBlockedSet):
                         # print("i: {}, j:{}".format(i, j))
                         # print()
                         neighbour = nodes[i][j]
-                        edge = Edge(node, neighbour)
-                        edges.append(edge)          
+                        edges[((node.x, node.y), (neighbour.x, neighbour.y))] = "open"        
             # print("done")
-    
-    # now that edges have been generated, we can use 'randomBlockedSet' to block out edges
-    # for blocked in randomBlockedSet:
-    #     curr_node = nodes[blocked[0]][blocked[1]]
-        # work in progress
-    
-    
     return edges
+
+def block_edges(edges, randomBlockedSet):
+    for blocked in randomBlockedSet:
+        # 2 edges for each diagonal must be blocked
+        edges[((blocked[0], blocked[1]), (blocked[0]+1, blocked[1]+1))] = "blocked"
+        edges[((blocked[0]+1, blocked[1]+1), (blocked[0], blocked[1]))] = "blocked"
+
+        edges[((blocked[0], blocked[1]+1), (blocked[0]+1, blocked[1]))] = "blocked"
+        edges[((blocked[0]+1, blocked[1]), (blocked[0], blocked[1]+1))] = "blocked"
+
+        # now we block in the special case of adjacent blocked cells
+        # checking block to the right
+        if (blocked[0], blocked[1]+1) in randomBlockedSet:
+            edges[((blocked[0], blocked[1]+1), (blocked[0]+1, blocked[1]+1))] = "blocked"
+            edges[((blocked[0]+1, blocked[1]+1), (blocked[0], blocked[1]+1))] = "blocked"
+
+        # checking block below
+        if (blocked[0]+1, blocked[1]) in randomBlockedSet:
+            edges[((blocked[0]+1, blocked[1]), (blocked[0]+1, blocked[1]+1))] = "blocked"
+            edges[((blocked[0]+1, blocked[1]+1), (blocked[0]+1, blocked[1]))] = "blocked"
+
+        # since we traverse the matrix left to right, top to bottom, no need to check for blocks to left or above
 
 def randomBlocked(rows, cols, blockSize): 
     blocked = set()

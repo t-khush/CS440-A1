@@ -1,7 +1,5 @@
 import math 
 import heapq
-from helper import Edge, Node
-import pygame 
 
 # just dumping everything from grid.py we can remove unused stuff later
 def AStar(start, end, nodes, edges, blocked, screen):
@@ -57,10 +55,11 @@ def AStar(start, end, nodes, edges, blocked, screen):
                     continue
                 else: 
                     neighbour = nodes[i][j]
-                    if checkInFringe(neighbour, fringe) is False:
-                        cost[(neighbour.x, neighbour.y)] = float('inf')
-                        parents[(neighbour.x, neighbour.y)] = None
-                    update_vertex(curr_node, cost, parents, neighbour, fringe) 
+                    if (edges[((curr_node.x, curr_node.y), (neighbour.x, neighbour.y))] == "open"):
+                        if checkInFringe(neighbour, fringe) is False:
+                            cost[(neighbour.x, neighbour.y)] = float('inf')
+                            parents[(neighbour.x, neighbour.y)] = None
+                        update_vertex(curr_node, cost, parents, neighbour, fringe) 
     # if path is empty list we can say no path found
     print("Start: " + str(start.x)+" " + str(start.y) +" End: " + str(end.x) + " " +str(end.y)+" Path Length "  + str(len(path)))
     for n in path: 

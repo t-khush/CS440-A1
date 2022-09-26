@@ -24,10 +24,4 @@ class Node:
         return (self < other) or (self == other)
     def __ge__(self, other):
         return (self > other) or (self == other)
-
-class Edge:
-    def __init__(self, n1, n2):
-        self.n1 = n1
-        self.n2 = n2
-        self.blocked = False
         
