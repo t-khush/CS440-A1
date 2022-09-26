@@ -61,26 +61,24 @@ def ThetaStar(start, end, nodes, edges, randomBlockedSet, screen):
     return path
 
 def update_vertex(curr_node, cost, parents, neighbour, fringe): 
-    distance = math.dist((curr_node.x, curr_node.y), (neighbour.x, neighbour.y))
+    distanceFromCurrent = math.dist((curr_node.x, curr_node.y), (neighbour.x, neighbour.y))
+    distanceFromCurrentParent = math.dist((parents[curr_node].x, parents[curr_node].y), (neighbour.x, neighbour.y))
     if line_of_sight(parents[curr_node], neighbour): 
-        if cost[(parents[(curr_node.x, curr_node.y)].x, parents[(curr_node.x, curr_node.y)].y)] + distance < cost[(neighbour.x, neighbour.y)]:
-            neighbour.gscore = cost[(parents[(curr_node.x, curr_node.y)].x, parents[(curr_node.x, curr_node.y)].y)] + distance
+        if cost[(parents[(curr_node.x, curr_node.y)].x, parents[(curr_node.x, curr_node.y)].y)] + distanceFromCurrentParent < cost[(neighbour.x, neighbour.y)]:
+            neighbour.gscore = cost[(parents[(curr_node.x, curr_node.y)].x, parents[(curr_node.x, curr_node.y)].y)] + distanceFromCurrentParent
             cost[(neighbour.x, neighbour.y)] = neighbour.gscore
             parents[(neighbour.x, neighbour.y)] = parents[(curr_node.x, curr_node.y)]
             if checkInFringe(neighbour, fringe): 
                 deleteFromFringe(neighbour, fringe)
             heapq.heappush(fringe, (neighbour.gscore + neighbour.hscore, neighbour))
         else: 
-            if distance + cost[(curr_node.x, curr_node.y)] < cost[(neighbour.x, neighbour.y)]:
-                neighbour.gscore = distance + cost[(curr_node.x, curr_node.y)]
+            if distanceFromCurrent + cost[(curr_node.x, curr_node.y)] < cost[(neighbour.x, neighbour.y)]:
+                neighbour.gscore = distanceFromCurrent + cost[(curr_node.x, curr_node.y)]
                 cost[(neighbour.x, neighbour.y)] = neighbour.gscore
                 parents[(neighbour.x, neighbour.y)] = curr_node
                 if checkInFringe(neighbour, fringe): 
                     deleteFromFringe(neighbour, fringe)
                 heapq.heappush(fringe, (neighbour.gscore + neighbour.hscore, neighbour))
-
-
-
     return path
 def hscore(curr_node, end): 
     return math.sqrt(2) * min(abs(curr_node.x - end.x), abs((curr_node.y - end.y))) + max(abs(curr_node.x - end.x), abs(curr_node.y - end.y)) - min(abs(curr_node.x-end.x), abs(curr_node.y - end.y))
