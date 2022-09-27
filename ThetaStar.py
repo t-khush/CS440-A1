@@ -5,7 +5,6 @@ import heapq
 
 def ThetaStar(start, end, nodes, randomBlockedSet):
     path = []
-    closed = set()
     fringe = []
     start.gscore = 0.0
     heapq.heapify(fringe)
@@ -19,8 +18,9 @@ def ThetaStar(start, end, nodes, randomBlockedSet):
         s = heapq.heappop(fringe)
         curr_node = s[1]
         curr_node.hscore = hscore(curr_node, end)
-        if curr_node.x == end.x and curr_node.y == end.y: 
-            closed.add((start.x, start.y))
+        if curr_node.x == end.x and curr_node.y == end.y:
+            print("reached") 
+            start.closed = True
             for i in range(len(nodes)):
                 for j in range(len(nodes[i])):
                     if (i,j) in cost: 
@@ -38,15 +38,13 @@ def ThetaStar(start, end, nodes, randomBlockedSet):
             path.append(parent)
             break
         
-        closed.add((curr_node.x, curr_node.y))
-        if curr_node is start: 
-            closed.add((curr_node.x, curr_node.y))
+        curr_node.visited = True
         for i in range(curr_node.x-1, curr_node.x+2):
             for j in range(curr_node.y-1, curr_node.y+2):
                 # neighbour is in grid, not the current node and unvisited
                 if(i<0 or j < 0 or i >= len(nodes) or j>=len(nodes[0])): 
                     continue
-                elif (nodes[i][j].x, nodes[i][j].y) in closed:
+                elif nodes[i][j].visited == True:
                     continue
                 else: 
                     neighbour = nodes[i][j]
@@ -107,11 +105,11 @@ def line_of_sight(parent, neighbour, nodes):
                     return False 
                 y0 = y0 + sy 
                 f = f - dx
-                if f != 0 and nodes[x0 + ((sx - 1)//2)][y0 + ((sy - 1)//2)].blocked:
-                    return False
-                if dy == 0 and nodes[x0 + ((sx - 1)//2)][y0].blocked and nodes[x0 + ((sx - 1)//2)][y0 - 1].blocked:
-                    return False
-                x0 += sx
+            if f != 0 and nodes[x0 + ((sx - 1)//2)][y0 + ((sy - 1)//2)].blocked:
+                return False
+            if dy == 0 and nodes[x0 + ((sx - 1)//2)][y0].blocked and nodes[x0 + ((sx - 1)//2)][y0 - 1].blocked:
+                return False
+            x0 += sx
     else: 
         while y0 != y1: 
             f = f + dx 

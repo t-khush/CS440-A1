@@ -4,7 +4,7 @@ import heapq
 # just dumping everything from grid.py we can remove unused stuff later
 def AStar(start, end, nodes, blocked_edges):
     path = []
-    closed = set()
+    # closed = set()
     fringe = []    # [(fscore, (x,y))]
     start.gscore= 0.0
     heapq.heapify(fringe)
@@ -15,6 +15,8 @@ def AStar(start, end, nodes, blocked_edges):
     cost[(start.x, start.y)] = 0
     parents[(start.x, start.y)] = start
     heapq.heappush(fringe, (0, start))
+    path_length = 0.0
+    
     while len(fringe) != 0:
         # print(closed)
         s = heapq.heappop(fringe)
@@ -22,7 +24,9 @@ def AStar(start, end, nodes, blocked_edges):
         curr_node.hscore = hscore(curr_node, end)
         if curr_node.x == end.x and curr_node.y == end.y:
             # print("test1")
-            closed.add((start.x, start.y))
+            path_length = curr_node.gscore
+            # closed.add((start.x, start.y))
+            start.closed = True
             for i in range(len(nodes)):
                 for j in range(len(nodes[i])):
                     if (i, j) in cost: #(i, j) in cost
@@ -38,20 +42,22 @@ def AStar(start, end, nodes, blocked_edges):
                 curr = parent
                 parent = parents[(parent.x, parent.y)]
             path.append(curr)
-            path.append(parent)
+            # path.append(parent)
             # print("test2")
             # path.append(start)
             break
 
-        closed.add((curr_node.x, curr_node.y))
-        if(curr_node is start): 
-            closed.add((curr_node.x, curr_node.y))
+        # closed.add((curr_node.x, curr_node.y))
+        curr_node.visited = True
+        # if(curr_node is start): 
+            # closed.add((curr_node.x, curr_node.y))
         for i in range(curr_node.x-1, curr_node.x+2):
             for j in range(curr_node.y-1, curr_node.y+2):
                 # neighbour is in grid, not the current node and unvisited
                 if(i<0 or j < 0 or i >= len(nodes) or j>=len(nodes[0])): 
                     continue
-                elif (nodes[i][j].x, nodes[i][j].y) in closed:
+                # elif (nodes[i][j].x, nodes[i][j].y) in closed:
+                elif nodes[i][j].visited == True:
                     continue
                 else: 
                     neighbour = nodes[i][j]
@@ -59,9 +65,11 @@ def AStar(start, end, nodes, blocked_edges):
                         if checkInFringe(neighbour, fringe) is False:
                             cost[(neighbour.x, neighbour.y)] = float('inf')
                             parents[(neighbour.x, neighbour.y)] = None
-                        update_vertex(curr_node, cost, parents, neighbour, fringe) 
-    # if path is empty list we can say no path found
-    print("AStar Start: " + str(start.x)+" " + str(start.y) +" End: " + str(end.x) + " " +str(end.y)+" Path Length "  + str(len(path)))
+                        update_vertex(curr_node, cost, parents, neighbour, fringe)
+
+    # reversing path to help user easily track the path from start to end
+    path.reverse()
+    print("AStar Start: {}  End: {}  Path Length: {}".format(start.x, start.y, path_length))
     for n in path: 
         print(str(n.x) +" " + str(n.y))
     return path
