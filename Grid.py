@@ -88,9 +88,9 @@ def main():
         end = randomVertex(ROWS, COLS, BLOCKSIZE, nodes)
         randomEnd = nodes[end[0]][end[1]]
 
-        # randomStart = nodes[0][3]
-        # randomEnd = nodes[2][0]
-        # randomBlockedSet = ((0,3), (1,3), (1,2))
+        # randomStart = nodes[4][3]
+        # randomEnd = nodes[1][0]
+        # randomBlockedSet = ((1,0), (2,0))
 
         print(randomBlockedSet)
         print(str(randomStart.x) + " " + str(randomStart.y))
@@ -98,6 +98,7 @@ def main():
         
         
         blocked_edges = genEdges(randomBlockedSet)
+        # print(blocked_edges)
 
         pygame.init()
         SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -106,11 +107,10 @@ def main():
         aStarPath = AStar(randomStart, randomEnd, nodes, blocked_edges)
 
         # Configure blocked vertices for ThetaStar
-        for edge in blocked_edges: 
-            for coordinate in edge: 
-                nodes[coordinate[0]][coordinate[1]].blocked = True 
+        for coordinate in randomBlockedSet: 
+            nodes[coordinate[0]][coordinate[1]].blocked = True
 
-        # ThetaStarPath = ThetaStar(randomStart, randomEnd, nodes, blocked_edges)
+        ThetaStarPath = ThetaStar(randomStart, randomEnd, nodes, blocked_edges)
 
         # print(blocked_edges)
         run = True
@@ -120,7 +120,7 @@ def main():
                 if event.type == pygame.QUIT:
                     run = False
             drawPath(aStarPath, SCREEN)
-            # drawPath(ThetaStarPath, SCREEN)
+            drawPath(ThetaStarPath, SCREEN)
             pygame.display.update()
 
 def genNodes():

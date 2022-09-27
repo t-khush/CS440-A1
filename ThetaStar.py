@@ -3,7 +3,7 @@ import heapq
 
 
 
-def ThetaStar(start, end, nodes, randomBlockedSet):
+def ThetaStar(start, end, nodes, blocked_edges):
     path = []
     fringe = []
     start.gscore = 0.0
@@ -13,13 +13,15 @@ def ThetaStar(start, end, nodes, randomBlockedSet):
     cost[(start.x, start.y)] = 0
     parents[(start.x, start.y)] = start
     heapq.heappush(fringe, (0, start))
+    path_length = 0.0
 
     while len(fringe) != 0: 
         s = heapq.heappop(fringe)
         curr_node = s[1]
         curr_node.hscore = hscore(curr_node, end)
         if curr_node.x == end.x and curr_node.y == end.y:
-            print("reached") 
+            print("reached")
+            path_length = curr_node.gscore 
             start.closed = True
             for i in range(len(nodes)):
                 for j in range(len(nodes[i])):
@@ -35,7 +37,6 @@ def ThetaStar(start, end, nodes, randomBlockedSet):
                 curr = parent
                 parent = parents[(parent.x, parent.y)]
             path.append(curr)
-            path.append(parent)
             break
         
         curr_node.visited = True
@@ -48,12 +49,14 @@ def ThetaStar(start, end, nodes, randomBlockedSet):
                     continue
                 else: 
                     neighbour = nodes[i][j]
-                    if checkInFringe(neighbour, fringe) is False:
-                        cost[(neighbour.x, neighbour.y)] = float('inf')
-                        parents[(neighbour.x, neighbour.y)] = None
-                    update_vertex(curr_node, cost, parents, neighbour, fringe, nodes) 
+                    if ((curr_node.x, curr_node.y), (neighbour.x, neighbour.y)) not in blocked_edges:
+                        if checkInFringe(neighbour, fringe) is False:
+                            cost[(neighbour.x, neighbour.y)] = float('inf')
+                            parents[(neighbour.x, neighbour.y)] = None
+                        update_vertex(curr_node, cost, parents, neighbour, fringe, nodes) 
     # if path is empty list we can say no path found
-    print("Theta Star Start: " + str(start.x)+" " + str(start.y) +" End: " + str(end.x) + " " +str(end.y)+" Path Length "  + str(len(path)))
+    path.reverse()
+    print("ThetaStar Start: {} {}  End: {} {}  Path Length: {}".format(start.x, start.y, end.x, end.y, path_length))
     for n in path: 
         print(str(n.x) +" " + str(n.y))
     return path
@@ -61,7 +64,7 @@ def ThetaStar(start, end, nodes, randomBlockedSet):
 def update_vertex(curr_node, cost, parents, neighbour, fringe, nodes): 
     distanceFromCurrent = math.dist((curr_node.x, curr_node.y), (neighbour.x, neighbour.y))
     distanceFromCurrentParent = math.dist((parents[(curr_node.x, curr_node.y)].x, parents[(curr_node.x, curr_node.y)].y), (neighbour.x, neighbour.y))
-    if line_of_sight(parents[(curr_node.x, curr_node.y)], neighbour, nodes): 
+    if line_of_sight(parents[(curr_node.x, curr_node.y)], neighbour, nodes):
         if cost[(parents[(curr_node.x, curr_node.y)].x, parents[(curr_node.x, curr_node.y)].y)] + distanceFromCurrentParent < cost[(neighbour.x, neighbour.y)]:
             neighbour.gscore = cost[(parents[(curr_node.x, curr_node.y)].x, parents[(curr_node.x, curr_node.y)].y)] + distanceFromCurrentParent
             cost[(neighbour.x, neighbour.y)] = neighbour.gscore
@@ -69,14 +72,14 @@ def update_vertex(curr_node, cost, parents, neighbour, fringe, nodes):
             if checkInFringe(neighbour, fringe): 
                 deleteFromFringe(neighbour, fringe)
             heapq.heappush(fringe, (neighbour.gscore + neighbour.hscore, neighbour))
-        else: 
-            if distanceFromCurrent + cost[(curr_node.x, curr_node.y)] < cost[(neighbour.x, neighbour.y)]:
-                neighbour.gscore = distanceFromCurrent + cost[(curr_node.x, curr_node.y)]
-                cost[(neighbour.x, neighbour.y)] = neighbour.gscore
-                parents[(neighbour.x, neighbour.y)] = curr_node
-                if checkInFringe(neighbour, fringe): 
-                    deleteFromFringe(neighbour, fringe)
-                heapq.heappush(fringe, (neighbour.gscore + neighbour.hscore, neighbour))
+    else: 
+        if distanceFromCurrent + cost[(curr_node.x, curr_node.y)] < cost[(neighbour.x, neighbour.y)]:
+            neighbour.gscore = distanceFromCurrent + cost[(curr_node.x, curr_node.y)]
+            cost[(neighbour.x, neighbour.y)] = neighbour.gscore
+            parents[(neighbour.x, neighbour.y)] = curr_node
+            if checkInFringe(neighbour, fringe): 
+                deleteFromFringe(neighbour, fringe)
+            heapq.heappush(fringe, (neighbour.gscore + neighbour.hscore, neighbour))
 
 def line_of_sight(parent, neighbour, nodes):
     x0 = parent.x
@@ -123,9 +126,12 @@ def line_of_sight(parent, neighbour, nodes):
             if dx == 0 and nodes[x0][y0 + ((sy - 1)//2)].blocked and nodes[x0 - 1][y0 + ((sy - 1)//2)].blocked:
                 return False
             y0 += sy
+    # print("LoS bw ({},{}) and ({},{})".format(parent.x, parent.y, neighbour.x, neighbour.y))
     return True
-def hscore(curr_node, end): 
-    return math.sqrt(2) * min(abs(curr_node.x - end.x), abs((curr_node.y - end.y))) + max(abs(curr_node.x - end.x), abs(curr_node.y - end.y)) - min(abs(curr_node.x-end.x), abs(curr_node.y - end.y))
+
+def hscore(curr_node, end):
+    return math.dist((curr_node.x, curr_node.y), (end.x, end.y)) 
+    # return math.sqrt(2) * min(abs(curr_node.x - end.x), abs((curr_node.y - end.y))) + max(abs(curr_node.x - end.x), abs(curr_node.y - end.y)) - min(abs(curr_node.x-end.x), abs(curr_node.y - end.y))
 
 def checkInFringe(neighbour, fringe): 
     for i in range(len(fringe)): 

@@ -4,7 +4,6 @@ import heapq
 # just dumping everything from grid.py we can remove unused stuff later
 def AStar(start, end, nodes, blocked_edges):
     path = []
-    # closed = set()
     fringe = []    # [(fscore, (x,y))]
     start.gscore= 0.0
     heapq.heapify(fringe)
@@ -18,7 +17,6 @@ def AStar(start, end, nodes, blocked_edges):
     path_length = 0.0
     
     while len(fringe) != 0:
-        # print(closed)
         s = heapq.heappop(fringe)
         curr_node = s[1]
         curr_node.hscore = hscore(curr_node, end)
@@ -56,7 +54,6 @@ def AStar(start, end, nodes, blocked_edges):
                 # neighbour is in grid, not the current node and unvisited
                 if(i<0 or j < 0 or i >= len(nodes) or j>=len(nodes[0])): 
                     continue
-                # elif (nodes[i][j].x, nodes[i][j].y) in closed:
                 elif nodes[i][j].visited == True:
                     continue
                 else: 
@@ -69,7 +66,7 @@ def AStar(start, end, nodes, blocked_edges):
 
     # reversing path to help user easily track the path from start to end
     path.reverse()
-    print("AStar Start: {}  End: {}  Path Length: {}".format(start.x, start.y, path_length))
+    print("AStar Start: {} {}  End: {} {}  Path Length: {}".format(start.x, start.y, end.x, end.y, path_length))
     for n in path: 
         print(str(n.x) +" " + str(n.y))
     return path
