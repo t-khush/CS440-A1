@@ -1,4 +1,5 @@
 
+
 import sys
 import pygame
 import random
@@ -7,20 +8,32 @@ from ThetaStar import ThetaStar
 from helper import Node
 
 BLACK = (0, 0, 0)
+GREEN= (0,255,0)
+RED= (255,0,0)
 WHITE = (255, 255, 255)
+PURPLE= (62.7,12.5,94.1)
 WINDOW_HEIGHT = 1000
-WINDOW_WIDTH = 1000
-ROWS = 400 #1000 
-COLS = 300 #500 
-BLOCKSIZE = 100 # 10
+WINDOW_WIDTH = 500
+ROWS = 1000 #1000 
+COLS = 500 #500 
+BLOCKSIZE = 10 # 10
 Textfile= False
 
+#for text files only
 startVertex=(0,0)
 endVertex=(0,0)
 blockedCells=dict()
 
+#for which path is needed
+#for now its for text file
+wantA= False
+wantT= False
+
+
+
 if len(sys.argv)>1:
     file1= sys.argv[1]
+    pathSetting= sys.argv[2]
     Textfile= True
     with open(file1, 'r') as f:
         #since we have orgin at (0,0), we have to move
@@ -34,9 +47,6 @@ if len(sys.argv)>1:
         line = f.readline().strip().split()
         COLS = int(line[0])*100
         ROWS = int(line[1])*100
-
-        print(startVertex)
-        print(endVertex)
        
 
         #Getting the blocked cells
@@ -45,8 +55,10 @@ if len(sys.argv)>1:
             if (int(split[2])==1):
                 blockedCells[(int(split[1]) -1, int(split[0])-1 )] = int(split[2])
            
-        
-        print(blockedCells)
+    if (pathSetting== "astar"):
+        wantA= True
+    if (pathSetting== "thetastar"):
+        wantT= True
 
 def main():
 
@@ -71,14 +83,36 @@ def main():
         SCREEN= pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT))
         SCREEN.fill(WHITE)
         drawGrid(tBlockedSet, tStart, tEnd)
-        path = AStar(tStart, tEnd, nodes, blocked_edges, tBlockedSet, SCREEN)
+        nodesDict = dict()
+        if wantA:
+            Apath = AStar(tStart, tEnd, nodes, blocked_edges)[0]
+            nodesDict = AStar(tStart, tEnd, nodes, blocked_edges)[1]
+
+        # Configure blocked vertices for ThetaStar
+        if wantT:
+            for coordinate in tBlockedSet: 
+                nodes[coordinate[0]][coordinate[1]].blocked = True
+
+            Tpath = ThetaStar(tStart, tEnd, nodes, blocked_edges)[0]
+            nodesDict = ThetaStar(tStart, tEnd, nodes, blocked_edges)[1]
+
         run1= True
 
         while run1:
             for event in pygame.event.get():
+                if event.type== pygame.MOUSEBUTTONDOWN:
+                    if(roundedPos(pygame.mouse.get_pos()) in nodesDict):
+                        node = aStarNodesDict[roundedPos(pygame.mouse.get_pos())]
+                        print(node.__str__())
+                        print("G score: " + str(node.gscore))
+                        print("F score: " + str(node.fscore))
+                        print("H score: " + str(node.hscore))
                 if event.type == pygame.QUIT:
                     run = False
-            drawPath(path, SCREEN)
+            if wantA:
+                drawPath(Apath, SCREEN,1)
+            if wantT:
+                drawPath(Tpath,SCREEN,0)
             pygame.display.update()
     else:
         #if file was not detected
@@ -88,40 +122,47 @@ def main():
         end = randomVertex(ROWS, COLS, BLOCKSIZE, nodes)
         randomEnd = nodes[end[0]][end[1]]
 
-        # randomStart = nodes[4][3]
-        # randomEnd = nodes[1][0]
-        # randomBlockedSet = ((1,0), (2,0))
-
-        print(randomBlockedSet)
-        print(str(randomStart.x) + " " + str(randomStart.y))
-        print(str(randomEnd.x) + " " + str(randomEnd.y))
-        
         
         blocked_edges = genEdges(randomBlockedSet)
-        # print(blocked_edges)
 
         pygame.init()
         SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         SCREEN.fill(WHITE)
         drawGrid(randomBlockedSet, randomStart, randomEnd)
-        aStarPath = AStar(randomStart, randomEnd, nodes, blocked_edges)
+
+        # UNCOMMENT BELOW FOR A* 
+        #  aStar = AStar(randomStart, randomEnd, nodes, blocked_edges)
+        # path = aStar[0]
+        # nodesDict = aStar[1]
+    
 
         # Configure blocked vertices for ThetaStar
         for coordinate in randomBlockedSet: 
             nodes[coordinate[0]][coordinate[1]].blocked = True
 
-        ThetaStarPath = ThetaStar(randomStart, randomEnd, nodes, blocked_edges)
-
-        # print(blocked_edges)
+        # UNCOMMENT BELOW FOR THETASTAR
+        thetaStar = ThetaStar(randomStart, randomEnd, nodes, blocked_edges)
+        path = thetaStar[0]
+        nodesDict = thetaStar[1]
         run = True
         i = 0
         while run:
             for event in pygame.event.get():
+                if event.type== pygame.MOUSEBUTTONDOWN:
+                    if(roundedPos(pygame.mouse.get_pos()) in nodesDict):
+                        node = nodesDict[roundedPos(pygame.mouse.get_pos())]
+                        print(node.__str__())
+                        print("G score: " + str(node.gscore))
+                        print("F score: " + str(node.fscore))
+                        print("H score: " + str(node.hscore))
                 if event.type == pygame.QUIT:
                     run = False
-            drawPath(aStarPath, SCREEN)
-            drawPath(ThetaStarPath, SCREEN)
+            # drawPath(aStarPath, SCREEN, 1)
+            drawPath(path, SCREEN, 1)            
             pygame.display.update()
+
+def roundedPos(position): 
+    return (round(position[1]/BLOCKSIZE)), round(position[0]/BLOCKSIZE)
 
 def genNodes():
     nodes = []
@@ -219,18 +260,21 @@ def drawGrid(randomBlockedSet, randomStart, randomEnd):
             pygame.draw.line(SCREEN, BLACK, (y*BLOCKSIZE + BLOCKSIZE, x*BLOCKSIZE), (y*BLOCKSIZE, x*BLOCKSIZE + BLOCKSIZE))
     
     #(r, g, b) is color, (x, y) is center, R is radius and w is the thickness of the circle border.
-    pygame.draw.circle(SCREEN, (0,255,0), (randomStart.y*BLOCKSIZE, randomStart.x*BLOCKSIZE), 5, 5)
-    pygame.draw.circle(SCREEN, (255,0,0), (randomEnd.y*BLOCKSIZE, randomEnd.x*BLOCKSIZE), 5, 5) 
+    pygame.draw.circle(SCREEN, (GREEN), (randomStart.y*BLOCKSIZE, randomStart.x*BLOCKSIZE), 5, 5)
+    pygame.draw.circle(SCREEN, (RED), (randomEnd.y*BLOCKSIZE, randomEnd.x*BLOCKSIZE), 5, 5)
 
 
 # def drawLine(start, end): 
 #     pygame.draw.line(SCREEN, (0, 0, 255), (start.y*BLOCKSIZE, start.x*BLOCKSIZE), (end.y*BLOCKSIZE, end.x*BLOCKSIZE), 3)
 
-def drawPath(path, screen):
+def drawPath(path, screen, number):
     for i in range(0, len(path)-1): 
+        if (number==1):
+            if (i!=0):
+                pygame.draw.circle(SCREEN,(PURPLE), (path[i].y*BLOCKSIZE, path[i].x*BLOCKSIZE), 5, 5)
         drawLine(screen, path[i], path[i+1])
 
 def drawLine(screen, start, end): 
-    pygame.draw.line(screen, (0, 0, 255), (start.y * BLOCKSIZE, start.x * BLOCKSIZE), (end.y * BLOCKSIZE, end.x * BLOCKSIZE),int(0.04 * BLOCKSIZE))
+    pygame.draw.line(screen, (0, 0, 255), (start.y * BLOCKSIZE, start.x * BLOCKSIZE), (end.y * BLOCKSIZE, end.x * BLOCKSIZE),max(int(0.2 * BLOCKSIZE), 5))
 
 main()

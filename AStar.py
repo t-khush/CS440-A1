@@ -15,10 +15,11 @@ def AStar(start, end, nodes, blocked_edges):
     parents[(start.x, start.y)] = start
     heapq.heappush(fringe, (0, start))
     path_length = 0.0
-    
+    nodesDict = dict()
     while len(fringe) != 0:
         s = heapq.heappop(fringe)
         curr_node = s[1]
+        nodesDict[(curr_node.x, curr_node.y)] = curr_node
         curr_node.hscore = hscore(curr_node, end)
         if curr_node.x == end.x and curr_node.y == end.y:
             # print("test1")
@@ -69,7 +70,7 @@ def AStar(start, end, nodes, blocked_edges):
     print("AStar Start: {} {}  End: {} {}  Path Length: {}".format(start.x, start.y, end.x, end.y, path_length))
     for n in path: 
         print(str(n.x) +" " + str(n.y))
-    return path
+    return path, nodesDict
 
 def hscore(curr_node, end): 
     return math.sqrt(2) * min(abs(curr_node.x - end.x), abs((curr_node.y - end.y))) + max(abs(curr_node.x - end.x), abs(curr_node.y - end.y)) - min(abs(curr_node.x-end.x), abs(curr_node.y - end.y))

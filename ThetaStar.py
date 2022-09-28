@@ -13,15 +13,16 @@ def ThetaStar(start, end, nodes, blocked_edges):
     cost[(start.x, start.y)] = 0
     parents[(start.x, start.y)] = start
     heapq.heappush(fringe, (0, start))
-    path_length = 0.0
+    path_cost = 0.0
+    nodesDict = dict()
 
     while len(fringe) != 0: 
         s = heapq.heappop(fringe)
         curr_node = s[1]
         curr_node.hscore = hscore(curr_node, end)
+        nodesDict[(curr_node.x, curr_node.y)] = curr_node
         if curr_node.x == end.x and curr_node.y == end.y:
-            print("reached")
-            path_length = curr_node.gscore 
+            path_cost = curr_node.gscore 
             start.closed = True
             for i in range(len(nodes)):
                 for j in range(len(nodes[i])):
@@ -56,10 +57,10 @@ def ThetaStar(start, end, nodes, blocked_edges):
                         update_vertex(curr_node, cost, parents, neighbour, fringe, nodes) 
     # if path is empty list we can say no path found
     path.reverse()
-    print("ThetaStar Start: {} {}  End: {} {}  Path Length: {}".format(start.x, start.y, end.x, end.y, path_length))
+    print("ThetaStar Start: {} {}  End: {} {}  Path Cost: {}".format(start.x, start.y, end.x, end.y, path_cost))
     for n in path: 
         print(str(n.x) +" " + str(n.y))
-    return path
+    return path, nodesDict
 
 def update_vertex(curr_node, cost, parents, neighbour, fringe, nodes): 
     distanceFromCurrent = math.dist((curr_node.x, curr_node.y), (neighbour.x, neighbour.y))
