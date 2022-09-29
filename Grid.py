@@ -1,5 +1,3 @@
-
-
 import sys
 import pygame
 import random
@@ -100,10 +98,10 @@ def main():
         while run1:
             for event in pygame.event.get():
                 if event.type== pygame.MOUSEBUTTONDOWN:
-                    print(roundedPos(pygame.mouse.get_pos()))
+                    ##print(roundedPos(pygame.mouse.get_pos()))
                     if(roundedPos(pygame.mouse.get_pos()) in nodesDict):
                         node = nodesDict[roundedPos(pygame.mouse.get_pos())]
-                        print(node.__str__())
+                        print("(",(node.y)+1,",",(node.x)+1,")")
                         print("G score: " + str(node.gscore))
                         print("F score: " + str(node.fscore))
                         print("H score: " + str(node.hscore))
@@ -147,7 +145,7 @@ def main():
                 if event.type== pygame.MOUSEBUTTONDOWN:
                     if(roundedPos(pygame.mouse.get_pos()) in nodesDict):
                         node = nodesDict[roundedPos(pygame.mouse.get_pos())]
-                        print(node.__str__())
+                        print("(",(node.y)+1,",",(node.x)+1,")")
                         print("G score: " + str(node.gscore))
                         print("F score: " + str(node.fscore))
                         print("H score: " + str(node.hscore))
@@ -171,29 +169,6 @@ def genNodes():
     return nodes
 
 def genEdges(blockedSet):
-    # for row in nodes:
-    #     for node in row:
-    #         print("x: {}, y:{}".format(node.x, node.y))
-    #     print()    
-
-    # [(node1, node2)]
-
-    # {
-    #   ( (current.x, current.y), (neighbour.x, neighbour.y) ) = "open/blocked"
-    # }
-    # edges = dict()
-    # for row in nodes:
-    #     for node in row:
-    #         # the loops below run 9 times
-    #         for i in range(node.x-1, node.x+2):
-    #             for j in range(node.y-1, node.y+2):
-    #                 # neighbour is in grid, not the current node
-    #                 if ((i>=0 and j>=0) and (i<len(nodes) and j<len(nodes[0])) and (i!=node.x or j!=node.y)):
-    #                     # print("i: {}, j:{}".format(i, j))
-    #                     # print()
-    #                     neighbour = nodes[i][j]
-    #                     edges[((node.x, node.y), (neighbour.x, neighbour.y))] = "open"        
-            # print("done")
     # ( (n1.x, n1.y), (n2.x, n2.y) )        
     blocked_edges = set()
     for vertex in blockedSet:
@@ -268,9 +243,9 @@ def drawPath(path, screen, number):
         drawLine(screen, path[i], path[i+1])
         if (number==1):
             if (i!=0):
-                pygame.draw.circle(SCREEN,(PURPLE), (path[i].y*BLOCKSIZE, path[i].x*BLOCKSIZE), 5, 5)
+                pygame.draw.circle(SCREEN,(PURPLE), (path[i].y*BLOCKSIZE, path[i].x*BLOCKSIZE), 4, 4)
 
 def drawLine(screen, start, end): 
-    pygame.draw.line(screen, (0, 0, 255), (start.y * BLOCKSIZE, start.x * BLOCKSIZE), (end.y * BLOCKSIZE, end.x * BLOCKSIZE),max(int(0.2 * BLOCKSIZE), 5))
+    pygame.draw.line(screen, (0, 0, 255), (start.y * BLOCKSIZE, start.x * BLOCKSIZE), (end.y * BLOCKSIZE, end.x * BLOCKSIZE),max(int(0.075 * BLOCKSIZE), 5))
 
 main()

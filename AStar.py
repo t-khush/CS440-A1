@@ -1,7 +1,6 @@
 import math 
 import heapq
 
-# just dumping everything from grid.py we can remove unused stuff later
 def AStar(start, end, nodes, blocked_edges):
     path = []
     fringe = []    # [(fscore, (x,y))]
@@ -67,9 +66,9 @@ def AStar(start, end, nodes, blocked_edges):
 
     # reversing path to help user easily track the path from start to end
     path.reverse()
-    print("AStar Start: {} {}  End: {} {}  Path Length: {}".format(start.x, start.y, end.x, end.y, path_length))
+    print("AStar Start: {} {}  End: {} {}  Path Length: {}".format((start.y)+1, (start.x)+1, (end.y)+1, (end.x)+1, path_length))
     for n in path: 
-        print(str(n.x) +" " + str(n.y))
+        print(str((n.y)+1) +" " + str((n.x)+1))
     return path, nodesDict
 
 def hscore(curr_node, end): 

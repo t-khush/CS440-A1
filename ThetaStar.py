@@ -1,8 +1,6 @@
 import math
 import heapq
 
-
-
 def ThetaStar(start, end, nodes, blocked_edges):
     path = []
     fringe = []
@@ -57,9 +55,9 @@ def ThetaStar(start, end, nodes, blocked_edges):
                         update_vertex(curr_node, cost, parents, neighbour, fringe, nodes) 
     # if path is empty list we can say no path found
     path.reverse()
-    print("ThetaStar Start: {} {}  End: {} {}  Path Cost: {}".format(start.x, start.y, end.x, end.y, path_cost))
+    print("ThetaStar Start: {} {}  End: {} {}  Path Cost: {}".format((start.y)+1, (start.x)+1, (end.y)+1, (end.x)+1, path_cost))
     for n in path: 
-        print(str(n.x) +" " + str(n.y))
+        print(str((n.y)+1) +" " + str((n.x)+1))
     return path, nodesDict
 
 def update_vertex(curr_node, cost, parents, neighbour, fringe, nodes): 
