@@ -4,6 +4,7 @@ import random
 from AStar import AStar
 from ThetaStar import ThetaStar
 from helper import Node
+from memory_profiler import profile
 
 BLACK = (0, 0, 0)
 GREEN= (0,255,0)
@@ -46,15 +47,18 @@ if len(sys.argv)==3:
         endVertex = (int(line[0])-1 , int(line[1])-1 )
 
         line = f.readline().strip().split()
-        COLS = int(line[0])*100
-        ROWS = int(line[1])*100
-        BLOCKSIZE = 100
+        BLOCKSIZE = 10
+        COLS = int(line[0])*BLOCKSIZE
+        ROWS = int(line[1])*BLOCKSIZE
+        
 
         #Getting the blocked cells
         for line in f.readlines():
             split = line.strip().split()
             if (int(split[2])==1):
                 blockedCells[(int(split[1]) -1, int(split[0])-1 )] = int(split[2])
+
+@profile
 def main():
 
     # for x in range(0, int(ROWS/BLOCKSIZE)):
@@ -93,12 +97,11 @@ def main():
             Tpath = ThetaStar(tStart, tEnd, nodes, blocked_edges)
             path = Tpath[0]
             nodesDict = Tpath[1]
-        run1= True
 
-        while run1:
+        run = True
+        while run:
             for event in pygame.event.get():
                 if event.type== pygame.MOUSEBUTTONDOWN:
-                    ##print(roundedPos(pygame.mouse.get_pos()))
                     if(roundedPos(pygame.mouse.get_pos()) in nodesDict):
                         node = nodesDict[roundedPos(pygame.mouse.get_pos())]
                         print("(",(node.y)+1,",",(node.x)+1,")")
@@ -107,8 +110,10 @@ def main():
                         print("H score: " + str(node.hscore))
                 if event.type == pygame.QUIT:
                     run = False
-            drawPath(path, SCREEN,1)
+            # drawPath(aStarPath, SCREEN, 1)
+            drawPath(path, SCREEN, 1)            
             pygame.display.update()
+            # break
     else:
         #if file was not detected
         randomBlockedSet = randomBlocked(ROWS, COLS, BLOCKSIZE) ## Check these numbers and make sure they match drawGrid
@@ -138,8 +143,8 @@ def main():
             Tpath = ThetaStar(randomStart, randomEnd, nodes, blocked_edges)
             path = Tpath[0]
             nodesDict = Tpath[1]
-        run = True
 
+        run = True
         while run:
             for event in pygame.event.get():
                 if event.type== pygame.MOUSEBUTTONDOWN:
@@ -154,6 +159,7 @@ def main():
             # drawPath(aStarPath, SCREEN, 1)
             drawPath(path, SCREEN, 1)            
             pygame.display.update()
+            # break
 
 def roundedPos(position): 
     return (round(position[1]/BLOCKSIZE)), round(position[0]/BLOCKSIZE)
@@ -194,7 +200,7 @@ def genEdges(blockedSet):
 def randomBlocked(rows, cols, blockSize): 
     blocked = set()
     numCells = int((rows/blockSize * cols/blockSize) * 0.1)
-    for i in range(numCells): 
+    while len(blocked) != numCells: 
         randX = random.randrange(0, int(rows/blockSize))
         randY = random.randrange(0, int(cols/blockSize))
         pair = (randX, randY)
