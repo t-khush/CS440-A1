@@ -11,10 +11,10 @@ GREEN= (0,255,0)
 RED= (255,0,0)
 WHITE = (255, 255, 255)
 PURPLE= (62.7,12.5,94.1)
-WINDOW_HEIGHT = 1000
-WINDOW_WIDTH = 500
-ROWS = 1000 #1000 
-COLS = 500 #500 
+WINDOW_HEIGHT = 500
+WINDOW_WIDTH = 1000
+ROWS = 500 #1000 
+COLS = 1000 #500 
 BLOCKSIZE = 10 # 10
 Textfile= False
 
@@ -58,7 +58,7 @@ if len(sys.argv)==3:
             if (int(split[2])==1):
                 blockedCells[(int(split[1]) -1, int(split[0])-1 )] = int(split[2])
 
-@profile
+# @profile # uncomment for measuring memory use. The global variables and other things before main are miniscule and can be ignored for code simplicity
 def main():
 
     # for x in range(0, int(ROWS/BLOCKSIZE)):
@@ -113,7 +113,7 @@ def main():
             # drawPath(aStarPath, SCREEN, 1)
             drawPath(path, SCREEN, 1)            
             pygame.display.update()
-            # break
+            # break -> use this break when testing runtime or running analyzer bc user doesn't have to click on close to move onto next test case
     else:
         #if file was not detected
         randomBlockedSet = randomBlocked(ROWS, COLS, BLOCKSIZE) ## Check these numbers and make sure they match drawGrid

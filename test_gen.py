@@ -11,7 +11,7 @@ if (os.path.exists(os.path.join(os.getcwd(), dirpath)) is False):
 def main():
     # generate 50 grids of size 100 x 50
     # only generates 1 test rn, change it to 50 for all test cases
-    for i in range(1):
+    for i in range(50):
         goal = randomVertex()
         end = randomVertex()
         blocked_set = randomBlockedSet()
@@ -42,7 +42,7 @@ def randomBlockedSet():
         randX = random.randrange(1, cols+1)
         randY = random.randrange(1, rows+1)
         blocked_set.add((randX, randY))
-    print("\n", blocked_set, "\n")
+    # print("\n", blocked_set, "\n")
     return blocked_set
 
 main()
