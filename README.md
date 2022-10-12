@@ -2,7 +2,10 @@
 
 ## Instruction for Running Program:
 The program uses the pygame Python module for the interface. 
-Please run `pip install pygame` before trying to test the code.
+This program also uses memory_profiler to examine space usage. 
+Please run 
+`pip install pygame` and 
+`pip install memory_profiler` before trying to test the code. 
 The main file that is used to run the program is Grid.py. 
 
 It is configured to accept 2 command line arguments. First is ‘astar’ or ‘thetastar’ which is used to determine which algorithm will be executed. 
