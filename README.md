@@ -20,3 +20,5 @@ Example 2: text file called test.txt and you want to run theta*
 
 Note that if you use a text file with the program, you will have to terminate the process on the terminal to exit
 Press ctrl-c to terminate the program.
+
+![image](https://user-images.githubusercontent.com/25212456/197552143-4601b399-8403-468b-8dd6-23910ca19c26.png)
